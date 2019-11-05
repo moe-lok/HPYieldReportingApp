@@ -213,17 +213,22 @@ class TarzanCoverlayer(tk.Frame):
         def fillCell(ws, lastItem, offset):
             print("Fill up cell****")
             # fill up appropriate cell
-            row = str(lastItem[0].row + offset)  # get row plus offset
+            rowOffset = str(lastItem[0].row + offset)  # get row plus offset
             #
             for idx, val in enumerate(ents):
 
                 if val in ents1:
                     print(val)
-                    ws[colDict[list(colDict)[idx]] + row] = ents[val].get()
+                    ws[colDict[list(colDict)[idx]] + rowOffset] = ents[val].get()
 
                 if val in ents2:
-                    print(val)
-                    ws[colDict[list(colDict)[idx]] + row] = int(ents[val].get()) if ents[val].get() else None
+                    if val == 'Remarks':
+                        print(val)
+                        ws[colDict[list(colDict)[idx]] + rowOffset] = ents[val].get() if ents[val].get() else None
+                    else:
+                        print(val)
+                        ws[colDict[list(colDict)[idx]] + rowOffset] = int(ents[val].get()) if ents[
+                            val].get() else None
 
         def modifyRow(ws, lastItem):
             print("Modify Row****")

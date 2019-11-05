@@ -219,8 +219,13 @@ class RaptorStaker(tk.Frame):
                     ws[colDict[list(colDict)[idx]] + rowOffset] = ents[val].get()
 
                 if val in ents2:
-                    print(val)
-                    ws[colDict[list(colDict)[idx]] + rowOffset] = int(ents[val].get()) if ents[val].get() else None
+                    if val == 'Remarks':
+                        print(val)
+                        ws[colDict[list(colDict)[idx]] + rowOffset] = ents[val].get() if ents[val].get() else None
+                    else:
+                        print(val)
+                        ws[colDict[list(colDict)[idx]] + rowOffset] = int(ents[val].get()) if ents[
+                            val].get() else None
 
         def modifyRow(ws, lastItem):
             print("Modify Row****")
