@@ -195,7 +195,7 @@ class HVIE(tk.Frame):
             # H
             # iterate previous row
             for cell in ws["{}{}:{}{}".format(colDict2["colDate"], lastItem[0].row,
-                                              colDict["colMisalignedRO"], lastItem[0].row)][0]:
+                                              colDict["colETestResistancePadPadmisfireorexceededrangeofRppvalues"], lastItem[0].row)][0]:
                 print(cell.value)
                 prevRow = str(cell.row)
                 nextRow = str(cell.row + 1)
@@ -269,7 +269,7 @@ class HVIE(tk.Frame):
                 # get length of row
                 row_count = len(ws[colDict2["colDate"]])
                 # if not, insert new row below by moving the cells one row down
-                ws.move_range("{}{}:{}{}".format(colDict2["colDate"], lastItem[0].row + 1, colDict["colMisalignedRO"],
+                ws.move_range("{}{}:{}{}".format(colDict2["colDate"], lastItem[0].row + 1, colDict["colETestResistancePadPadmisfireorexceededrangeofRppvalues"],
                                                  row_count), rows=1, translate=True)
                 copyFormulaPrevRow(ws, lastItem)
                 # then, fill up appropriate cell

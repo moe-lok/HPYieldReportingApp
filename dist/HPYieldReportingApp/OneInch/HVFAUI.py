@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import StringVar, messagebox, BOTH, LEFT, BOTTOM, RIGHT, TOP, X, END
+from tkinter import StringVar, messagebox, BOTH, LEFT, BOTTOM, RIGHT, TOP, X, END, Y
 from tkinter.ttk import Frame, LabelFrame, Label, Entry, Button
 import datetime
 from copy import copy
@@ -9,12 +9,25 @@ from openpyxl.formula.translate import Translator
 from tkcalendar import DateEntry
 
 
-class TarzanEncap(tk.Frame):
+class HVFA(tk.Frame):
     # Column name of table
     fieldsLeft = ('Operator', 'Reel ID', 'Qty In', 'Qty Out')
-    fieldsRight1 = ('Incoming Reject Part', 'Bead1', 'Bead2', 'Bead3', 'Bead4', 'Bead5', 'Bead6')
-    fieldsRight2 = ('Bead1', 'Bead2', 'Bead3', 'Bead4', 'Bead5', 'Bead6')
-    fieldsRight3 = ('Encap Insufficient', 'Encap Bubbles', 'Bead Height', 'Encap Smear', 'Other', 'Remarks')
+    fieldsRight = ("No Die on Incoming “Good” Part", "No E-test Data", "E-test – Open", "E-test – Short",
+                   "E-test – Temp Register Failure", "E-test – TSR", "E-test – R-Scan",
+                   "E-test – Capacitance Out of Spec", "Production Reject", "Miscellaneous Reject",
+                   "Miscellaneous Tracked Reject", "Barrier – Missing Islands", "Barrier – Barrier Damage",
+                   "Barrier – Delamination", "LA / Flex – Extra Etched Hole", "LA / Flex – Multiple Ablation",
+                   "LA / Flex – Missing Nozzles", "LA / Flex - Misaligned/Missing Counterbores",
+                   "Bond – Mark Skewed in Long Axis", "Bond – Missing Mark", "Bond – Chipping with Debri",
+                   "Stake – Squished Barrier", "Stake – Inboard Bubbles", "Stake – Wavy Barrier",
+                   "Stake – Blister Delam", "Encap – Wicking", "Encap – Bubbles",
+                   "Encap – Tails and Drips\n(not shown on UI anymore)", "Encap – Smearing", "Encap – Beading",
+                   "Encap – Insufficient", "Coverlayer – Misaligned", "Coverlayer – Smear/Squish",
+                   "Coverlayer – EVA Splatter\n(not shown on UI anymore)", "Die Edge Chipping", "Die Corner Cracking",
+                   "Tab Lead Damage", "Encap Cracking", "Encap Crazing", "Encap Delam", "Fang Delam", "Corner Lift",
+                   "String Bubbles", "Connecting Bubbles", "Surface Contamination", "Backside Contamination",
+                   "Partical Causing Delam", "Unash", "Scratches", "Misaligned RO"
+                   )
 
     @staticmethod
     def resetForm(entries):
@@ -73,9 +86,9 @@ class TarzanEncap(tk.Frame):
     def __init__(self, root, strFileDir):
         tk.Frame.__init__(self, root)
 
-        SHEET_NAME = "Tarzan Encap"
+        SHEET_NAME = "HVFA"
 
-        TarEncapYieldTarget = 99.3
+        TarCoverlayerYieldTarget = 99.5
 
         colDict = {
             "colOperator": "D",
@@ -83,30 +96,56 @@ class TarzanEncap(tk.Frame):
             "colQtyIn": "F",
             "colQtyOut": "G",
 
-            # Bead Height Checker M/C Value
-            "colIncomingRejectPart": "I",
-            "colHeightCheckerBead1": "J",
-            "colHeightCheckerBead2": "K",
-            "colHeightCheckerBead3": "L",
-            "colHeightCheckerBead4": "M",
-            "colHeightCheckerBead5": "N",
-            "colHeightCheckerBead6": "O",
-
-            # Micrometer Gauge Value
-            "colMicGaugeValBead1": "P",
-            "colMicGaugeValBead2": "Q",
-            "colMicGaugeValBead3": "R",
-            "colMicGaugeValBead4": "S",
-            "colMicGaugeValBead5": "T",
-            "colMicGaugeValBead6": "U",
-
-            "colEncapInsufficient": "V",
-            "colEncapBubbles": "W",
-            "colBeadHeight": "X",
-            "colEncapSmear": "Y",
-            "colOther": "Z",
-            "colRemarks": "AA"
-
+            "colNoDieonIncomingGoodPart": "I",
+            "colNoEtestData": "J",
+            "colEtestOpen": "K",
+            "colEtestShort": "L",
+            "colEtestTempRegisterFailure": "M",
+            "colEtestTSR": "N",
+            "colEtestRScan": "O",
+            "colEtestCapacitanceOutofSpec": "P",
+            "colProductionReject": "Q",
+            "colMiscellaneousReject": "R",
+            "colMiscellaneousTrackedReject": "S",
+            "colBarrierMissingIslands": "T",
+            "colBarrierBarrierDamage": "U",
+            "colBarrierDelamination": "V",
+            "colLAFlexExtraEtchedHole": "W",
+            "colLAFlexMultipleAblation": "X",
+            "colLAFlexMissingNozzles": "Y",
+            "colLAFlexMisalignedMissingCounterbores": "Z",
+            "colBondMarkSkewedinLongAxis": "AA",
+            "colBondMissingMark": "AB",
+            "colBondChippingwithDebri": "AC",
+            "colStakeSquishedBarrier": "AD",
+            "colStakeInboardBubbles": "AE",
+            "colStakeWavyBarrier": "AF",
+            "colStakeBlisterDelam": "AG",
+            "colEncapWicking": "AH",
+            "colEncapBubbles": "AI",
+            "colEncapTailsandDripsnotshownonUIanymore": "AJ",
+            "colEncapSmearing": "AK",
+            "colEncapBeading": "AL",
+            "colEncapInsufficient": "AM",
+            "colCoverlayerMisaligned": "AN",
+            "colCoverlayerSmearSquish": "AO",
+            "colCoverlayerEVASplatternotshownonUIanymore": "AP",
+            "colDieEdgeChipping": "AQ",
+            "colDieCornerCracking": "AR",
+            "colTabLeadDamage": "AS",
+            "colEncapCracking": "AT",
+            "colEncapCrazing": "AU",
+            "colEncapDelam": "AV",
+            "colFangDelam": "AW",
+            "colCornerLift": "AX",
+            "colStringBubbles": "AY",
+            "colConnectingBubbles": "AZ",
+            "colSurfaceContamination": "BA",
+            "colBacksideContamination": "BB",
+            "colParticalCausingDelam": "BC",
+            "colUnash": "BD",
+            "colScratches": "BE",
+            "colMisalignedRO": "BF"
         }
 
         colDict2 = {
@@ -127,7 +166,7 @@ class TarzanEncap(tk.Frame):
             try:
                 result = int(val2 if val2 else 0) / int(val1 if val1 else 0) * 100
                 lblYieldTarget['text'] = round(result, 2)
-                if round(result, 2) < TarEncapYieldTarget:
+                if round(result, 2) < TarCoverlayerYieldTarget:
                     lblYieldTarget.config(background="red")
                 else:
                     lblYieldTarget.config(background="green")
@@ -138,23 +177,19 @@ class TarzanEncap(tk.Frame):
             self.resetForm(ents)
             self.resetValid(valid)
             validMainFrame.pack_forget()
-            validBeadMainFrame1.pack_forget()
-            validLastMainFrame.pack_forget()
+            validRejFrame.pack_forget()
 
         def checkForEmpty(entries, valids):
             print("Check for empty entries****")
             isEmpty = False
             self.resetValid(valids)
             validMainFrame.pack_forget()
-            validBeadMainFrame1.pack_forget()
-            validLastMainFrame.pack_forget()
+            validRejFrame.pack_forget()
 
             for k, entry in entries.items():
                 if entry.get().strip() == "":
                     validMainFrame.pack()
-                    validBeadMainFrame1.pack()
-                    validLastMainFrame.pack()
-
+                    validRejFrame.pack()
                     print("empty " + k)
                     isEmpty = True
                     print("before empty " + str(valids[k].grid_info()))
@@ -183,7 +218,7 @@ class TarzanEncap(tk.Frame):
             # H
             # iterate previous row
             for cell in ws["{}{}:{}{}".format(colDict2["colDate"], lastItem[0].row,
-                                              colDict["colRemarks"], lastItem[0].row)][0]:
+                                              colDict["colMisalignedRO"], lastItem[0].row)][0]:
                 print(cell.value)
                 prevRow = str(cell.row)
                 nextRow = str(cell.row + 1)
@@ -206,7 +241,7 @@ class TarzanEncap(tk.Frame):
             # row_count = ws1.max_row
             print("row count is: " + str(row_count))
 
-            # TODO: adjust minimum
+
             # set the minimum and maximum
             minRow = 7
             maxRow = row_count - 1
@@ -233,10 +268,7 @@ class TarzanEncap(tk.Frame):
             # fill up appropriate cell
             rowOffset = str(lastItem[0].row + offset)  # get row plus offset
             #
-            print("len of ents is****")
-            print(len(ents))
             for idx, val in enumerate(ents):
-
                 if val in ents1:
                     print(val)
                     ws[colDict[list(colDict)[idx]] + rowOffset] = ents[val].get()
@@ -260,16 +292,11 @@ class TarzanEncap(tk.Frame):
                 # get length of row
                 row_count = len(ws[colDict2["colDate"]])
                 # if not, insert new row below by moving the cells one row down
-                ws.move_range("{}{}:{}{}".format(colDict2["colDate"], lastItem[0].row + 1, colDict["colRemarks"],
+                ws.move_range("{}{}:{}{}".format(colDict2["colDate"], lastItem[0].row + 1, colDict["colMisalignedRO"],
                                                  row_count), rows=1, translate=True)
                 copyFormulaPrevRow(ws, lastItem)
                 # then, fill up appropriate cell
                 fillCell(ws, lastItem, 1)
-
-        # function to add suffix to dictionary keys
-        def transformKeys(multilevelDict):
-            return {str(key) + "gaugeVal": (transformKeys(value) if isinstance(value, dict) else value) for key, value
-                    in multilevelDict.items()}
 
         def handle_submit():
             # submit only when required fields are filled
@@ -285,10 +312,6 @@ class TarzanEncap(tk.Frame):
                         messagebox.showerror("Fail to load", "Permission Error:\n"
                                                              "User does not have permission to access or\n"
                                                              "Workbook is opened elsewhere")
-                    except FileNotFoundError:
-                        messagebox.showerror("Fail to find", "File Not Found Error:\n"
-                                                             "The Excel does not exist in directory or\n"
-                                                             "have been moved elsewhere")
                     else:
                         # get appropriate worksheet
                         ws = wb[SHEET_NAME]
@@ -322,44 +345,26 @@ class TarzanEncap(tk.Frame):
         leftFrame = tk.Frame(topFrame)
         leftFrame.pack(side=LEFT, fill=BOTH, padx=10, pady=10)
 
-        topLeftFrame = tk.Frame(leftFrame)
-        topLeftFrame.pack(fill=BOTH)
-
-        bottomLeftFrame = tk.Frame(leftFrame)
-        bottomLeftFrame.pack(fill=BOTH)
-
-        mainFrame = tk.Frame(topLeftFrame)
+        mainFrame = tk.Frame(leftFrame)
         mainFrame.pack(side=LEFT, fill=BOTH)
 
-        validMainFrame = tk.Frame(topLeftFrame, pady=40)
+        validMainFrame = tk.Frame(leftFrame, pady=40)
         validMainFrame.pack(side=LEFT, fill=BOTH, expand=True)
         validMainFrame.pack_forget()
 
-        # Bead Height Checker M/C Value Frame
-        beadFrame1 = LabelFrame(bottomLeftFrame, text="Bead Height Checker M/C Value")
-        beadFrame1.pack(side=BOTTOM, padx=10, pady=10, fill=BOTH)
-
-        beadMainFrame1 = Frame(beadFrame1)
-        beadMainFrame1.pack(side=LEFT, fill=BOTH, expand=True)
-
-        validBeadMainFrame1 = Frame(beadFrame1)
-        validBeadMainFrame1.pack(side=LEFT, fill=BOTH, expand=True)
-        validBeadMainFrame1.pack_forget()
-
         # Top Right Frame
-        rightFrame = tk.Frame(topFrame)
-        rightFrame.pack()
+        rightFrame = tk.LabelFrame(topFrame, text='Reject Code')
+        rightFrame.pack(padx=10, pady=10, fill=BOTH, expand=True)
 
-        # last Frame
-        lastFrame = LabelFrame(rightFrame, text="Unknown")
-        lastFrame.pack(padx=10, pady=10, fill=BOTH)
+        self.scrollFrame = ScrollFrame(rightFrame)  # add a new scrollable frame.
+        self.scrollFrame.pack(side="top", fill="both", expand=True)
 
-        lastMainFrame = Frame(lastFrame)
-        lastMainFrame.pack(side=LEFT, fill=BOTH, expand=True)
+        rejFrame = Frame(self.scrollFrame.viewPort)
+        rejFrame.pack(side=LEFT, expand=False)
 
-        validLastMainFrame = Frame(lastFrame)
-        validLastMainFrame.pack(side=LEFT, fill=BOTH, expand=True)
-        validLastMainFrame.pack_forget()
+        validRejFrame = Frame(self.scrollFrame.viewPort)
+        validRejFrame.pack(side=LEFT, fill=BOTH, expand=True)
+        validRejFrame.pack_forget()
 
         # bottom frame
         bottomFrame = tk.Frame(root)
@@ -379,16 +384,13 @@ class TarzanEncap(tk.Frame):
         ents1 = self.makeForm(mainFrame, self.fieldsLeft)
         entries2 = ents1
 
-        ents2 = self.makeForm(beadMainFrame1, self.fieldsRight1)
-        ents3 = self.makeForm(lastMainFrame, self.fieldsRight3)
+        ents2 = self.makeForm(rejFrame, self.fieldsRight)
         ents.update(ents1)
         ents.update(ents2)
-        ents.update(ents3)
 
-        print(ents.keys())
 
         valid = self.makeValidateTxt(validMainFrame, self.fieldsLeft)
-        print(valid.keys())
+        valid.update(self.makeValidateTxt(validRejFrame, self.fieldsRight))
 
         lblYieldTarget = Label(mainFrame, text="yield")
         lblYieldTarget.pack(padx=5, pady=5)
@@ -403,3 +405,54 @@ class TarzanEncap(tk.Frame):
         btnReset = Button(bottomFrame, text="reset", width=12, command=resetForms).pack(side=LEFT, pady=5, padx=5, )
         btnSubmit = Button(bottomFrame, text="submit", width=12, command=handle_submit).pack(side=LEFT, pady=5,
                                                                                              padx=5, )
+
+
+''' Special class for scrollbar '''
+
+
+class ScrollFrame(tk.Frame):
+
+    def __init__(self, parent):
+        super().__init__(parent)  # create a frame (self)
+        defaultBg = parent.cget("background")
+
+        self.canvas = tk.Canvas(self, borderwidth=0, background="#ffffff")  # place canvas on self
+
+        self.viewPort = tk.Frame(self.canvas,
+                                 background=defaultBg)  # place a frame on the canvas, this frame will hold the child
+        # widgets
+
+        self.viewPort.bind('<Enter>', self._bound_to_mousewheel)
+        self.viewPort.bind('<Leave>', self._unbound_to_mousewheel)
+
+        self.vsb = tk.Scrollbar(self, orient="vertical", command=self.canvas.yview)  # place a scrollbar on self
+        self.canvas.configure(yscrollcommand=self.vsb.set)  # attach scrollbar action to scroll of canvas
+
+        self.vsb.pack(side="right", fill="y")  # pack scrollbar to right of self
+        self.canvas.pack(side="left", fill="both", expand=True)  # pack canvas to left of self and expand to fil
+        self.canvas_frame = self.canvas.create_window((4, 4), window=self.viewPort, anchor="nw",
+                                                      # add view port frame to canvas
+                                                      tags="self.viewPort")
+
+        self.viewPort.bind("<Configure>",
+                           self.onFrameConfigure)  # bind an event whenever the size of the viewPort frame changes.
+
+        self.canvas.bind('<Configure>', self.FrameWidth)
+
+    def FrameWidth(self, event):
+        canvas_width = event.width
+        self.canvas.itemconfig(self.canvas_frame, width=canvas_width)
+
+    def onFrameConfigure(self, event):
+        '''Reset the scroll region to encompass the inner frame'''
+        self.canvas.configure(scrollregion=self.canvas.bbox(
+            "all"))  # whenever the size of the frame changes, alter the scroll region respectively.
+
+    def _bound_to_mousewheel(self, event):
+        self.canvas.bind_all("<MouseWheel>", self._on_mousewheel)
+
+    def _unbound_to_mousewheel(self, event):
+        self.canvas.unbind_all("<MouseWheel>")
+
+    def _on_mousewheel(self, event):
+        self.canvas.yview_scroll(int(-1 * (event.delta / 120)), "units")

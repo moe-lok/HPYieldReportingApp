@@ -206,7 +206,7 @@ class TarzanEncap(tk.Frame):
             # row_count = ws1.max_row
             print("row count is: " + str(row_count))
 
-            # TODO: adjust minimum
+
             # set the minimum and maximum
             minRow = 7
             maxRow = row_count - 1
@@ -285,10 +285,6 @@ class TarzanEncap(tk.Frame):
                         messagebox.showerror("Fail to load", "Permission Error:\n"
                                                              "User does not have permission to access or\n"
                                                              "Workbook is opened elsewhere")
-                    except FileNotFoundError:
-                        messagebox.showerror("Fail to find", "File Not Found Error:\n"
-                                                             "The Excel does not exist in directory or\n"
-                                                             "have been moved elsewhere")
                     else:
                         # get appropriate worksheet
                         ws = wb[SHEET_NAME]

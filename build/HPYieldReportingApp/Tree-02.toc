@@ -1,6 +1,6 @@
 ('C:\\Users\\lokman\\PycharmProjects\\test\\build\\HPYieldReportingApp\\setuptools-40.8.0-py3.7.egg',
  None,
- {'*.cp37-win_amd64.pyd', 'EGG-INFO', '*.pyc', '*.pyw', '*.pyd', '*.py'},
+ {'*.cp37-win_amd64.pyd', '*.py', '*.pyd', '*.pyw', '*.pyc', 'EGG-INFO'},
  'DATA',
  [('setuptools\\cli-32.exe',
    'C:\\Users\\lokman\\PycharmProjects\\test\\build\\HPYieldReportingApp\\setuptools-40.8.0-py3.7.egg\\setuptools\\cli-32.exe',

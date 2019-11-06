@@ -10,7 +10,7 @@ from openpyxl.utils.cell import coordinate_from_string, column_index_from_string
 from tkcalendar import DateEntry
 
 
-class RaptorBonder(tk.Frame):
+class TarzanBonder(tk.Frame):
     # Column name of table
     fieldsLeft = ('Operator', 'THA Reel ID')
     fieldsLeft1 = ('Wafer Lot #', 'Wafer ID #')
@@ -107,9 +107,9 @@ class RaptorBonder(tk.Frame):
     def __init__(self, root, strFileDir):
         tk.Frame.__init__(self, root)
 
-        SHEET_NAME = "RT Bonder"
+        SHEET_NAME = "Tarzan Bonder"
 
-        RapBonderYieldTarget = 98.75
+        TarzanBonderYieldTarget = 99.2
 
         colDict = {
             "colOperator": "D",
@@ -163,7 +163,7 @@ class RaptorBonder(tk.Frame):
             try:
                 result = int(val2 if val2 else 0) / int(val1 if val1 else 0) * 100
                 lblYieldTarget['text'] = round(result, 2)
-                if round(result, 2) < RapBonderYieldTarget:
+                if round(result, 2) < TarzanBonderYieldTarget:
                     lblYieldTarget.config(background="red")
                 else:
                     lblYieldTarget.config(background="green")
@@ -262,7 +262,7 @@ class RaptorBonder(tk.Frame):
             # row_count = ws1.max_row
             print("row count is: " + str(row_count))
 
-            # TODO: adjust minimum
+
             # set the minimum and maximum
             minRow = 7
             maxRow = row_count - 1
@@ -343,9 +343,9 @@ class RaptorBonder(tk.Frame):
                     fillCell(ws, lastItem, 1, keys)
                     mergeCell(ws, lastItem, 1)
 
-                    # TODO: fill wafer lot # and wafer id #
-                    # TODO: fill the rest of column
-                    # TODO: merge rows of certain column
+                    # fill wafer lot # and wafer id #
+                    # fill the rest of column
+                    # merge rows of certain column
 
             else:
                 # if empty, fill up appropriate cell
@@ -411,10 +411,6 @@ class RaptorBonder(tk.Frame):
                         messagebox.showerror("Fail to load", "Permission Error:\n"
                                                              "User does not have permission to access or\n"
                                                              "Workbook is opened elsewhere")
-                    except FileNotFoundError:
-                        messagebox.showerror("Fail to find", "File Not Found Error:\n"
-                                                             "The Excel does not exist in directory or\n"
-                                                             "have been moved elsewhere")
                     else:
                         # get appropriate worksheet
                         ws = wb[SHEET_NAME]

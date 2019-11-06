@@ -9,12 +9,11 @@ from openpyxl.formula.translate import Translator
 from tkcalendar import DateEntry
 
 
-class TarzanEncap(tk.Frame):
+class TarzanCoverlayer(tk.Frame):
     # Column name of table
     fieldsLeft = ('Operator', 'Reel ID', 'Qty In', 'Qty Out')
-    fieldsRight1 = ('Incoming Reject Part', 'Bead1', 'Bead2', 'Bead3', 'Bead4', 'Bead5', 'Bead6')
-    fieldsRight2 = ('Bead1', 'Bead2', 'Bead3', 'Bead4', 'Bead5', 'Bead6')
-    fieldsRight3 = ('Encap Insufficient', 'Encap Bubbles', 'Bead Height', 'Encap Smear', 'Other', 'Remarks')
+    fieldsRight = ('Incoming Reject Part', 'CL Alignment Out', 'Missing Coverlayer', 'FLex Jam', 'No Lam', 'Wrinkles',
+                   'ACA Dip', 'Contamination', 'Others', 'Remarks')
 
     @staticmethod
     def resetForm(entries):
@@ -73,9 +72,9 @@ class TarzanEncap(tk.Frame):
     def __init__(self, root, strFileDir):
         tk.Frame.__init__(self, root)
 
-        SHEET_NAME = "Tarzan Encap"
+        SHEET_NAME = "Tarzan Coverlayer"
 
-        TarEncapYieldTarget = 99.3
+        TarCoverlayerYieldTarget = 99.22
 
         colDict = {
             "colOperator": "D",
@@ -83,30 +82,17 @@ class TarzanEncap(tk.Frame):
             "colQtyIn": "F",
             "colQtyOut": "G",
 
-            # Bead Height Checker M/C Value
+            # Reject Code
             "colIncomingRejectPart": "I",
-            "colHeightCheckerBead1": "J",
-            "colHeightCheckerBead2": "K",
-            "colHeightCheckerBead3": "L",
-            "colHeightCheckerBead4": "M",
-            "colHeightCheckerBead5": "N",
-            "colHeightCheckerBead6": "O",
-
-            # Micrometer Gauge Value
-            "colMicGaugeValBead1": "P",
-            "colMicGaugeValBead2": "Q",
-            "colMicGaugeValBead3": "R",
-            "colMicGaugeValBead4": "S",
-            "colMicGaugeValBead5": "T",
-            "colMicGaugeValBead6": "U",
-
-            "colEncapInsufficient": "V",
-            "colEncapBubbles": "W",
-            "colBeadHeight": "X",
-            "colEncapSmear": "Y",
-            "colOther": "Z",
-            "colRemarks": "AA"
-
+            "colCLAlignmentOut": "J",
+            "colMissingCoverlayer": "K",
+            "colFlexJam": "L",
+            "colNoLam": "M",
+            "colWrinkles": "N",
+            "colACADip": "O",
+            "colContamination": "P",
+            "colOthers": "Q",
+            "colRemarks": "R",
         }
 
         colDict2 = {
@@ -127,7 +113,7 @@ class TarzanEncap(tk.Frame):
             try:
                 result = int(val2 if val2 else 0) / int(val1 if val1 else 0) * 100
                 lblYieldTarget['text'] = round(result, 2)
-                if round(result, 2) < TarEncapYieldTarget:
+                if round(result, 2) < TarCoverlayerYieldTarget:
                     lblYieldTarget.config(background="red")
                 else:
                     lblYieldTarget.config(background="green")
@@ -138,23 +124,19 @@ class TarzanEncap(tk.Frame):
             self.resetForm(ents)
             self.resetValid(valid)
             validMainFrame.pack_forget()
-            validBeadMainFrame1.pack_forget()
-            validLastMainFrame.pack_forget()
+            validRejFrame.pack_forget()
 
         def checkForEmpty(entries, valids):
             print("Check for empty entries****")
             isEmpty = False
             self.resetValid(valids)
             validMainFrame.pack_forget()
-            validBeadMainFrame1.pack_forget()
-            validLastMainFrame.pack_forget()
+            validRejFrame.pack_forget()
 
             for k, entry in entries.items():
                 if entry.get().strip() == "":
                     validMainFrame.pack()
-                    validBeadMainFrame1.pack()
-                    validLastMainFrame.pack()
-
+                    validRejFrame.pack()
                     print("empty " + k)
                     isEmpty = True
                     print("before empty " + str(valids[k].grid_info()))
@@ -206,7 +188,7 @@ class TarzanEncap(tk.Frame):
             # row_count = ws1.max_row
             print("row count is: " + str(row_count))
 
-            # TODO: adjust minimum
+
             # set the minimum and maximum
             minRow = 7
             maxRow = row_count - 1
@@ -233,8 +215,6 @@ class TarzanEncap(tk.Frame):
             # fill up appropriate cell
             rowOffset = str(lastItem[0].row + offset)  # get row plus offset
             #
-            print("len of ents is****")
-            print(len(ents))
             for idx, val in enumerate(ents):
 
                 if val in ents1:
@@ -266,11 +246,6 @@ class TarzanEncap(tk.Frame):
                 # then, fill up appropriate cell
                 fillCell(ws, lastItem, 1)
 
-        # function to add suffix to dictionary keys
-        def transformKeys(multilevelDict):
-            return {str(key) + "gaugeVal": (transformKeys(value) if isinstance(value, dict) else value) for key, value
-                    in multilevelDict.items()}
-
         def handle_submit():
             # submit only when required fields are filled
             if not checkForEmpty(entries2, valid):
@@ -285,10 +260,6 @@ class TarzanEncap(tk.Frame):
                         messagebox.showerror("Fail to load", "Permission Error:\n"
                                                              "User does not have permission to access or\n"
                                                              "Workbook is opened elsewhere")
-                    except FileNotFoundError:
-                        messagebox.showerror("Fail to find", "File Not Found Error:\n"
-                                                             "The Excel does not exist in directory or\n"
-                                                             "have been moved elsewhere")
                     else:
                         # get appropriate worksheet
                         ws = wb[SHEET_NAME]
@@ -322,44 +293,23 @@ class TarzanEncap(tk.Frame):
         leftFrame = tk.Frame(topFrame)
         leftFrame.pack(side=LEFT, fill=BOTH, padx=10, pady=10)
 
-        topLeftFrame = tk.Frame(leftFrame)
-        topLeftFrame.pack(fill=BOTH)
-
-        bottomLeftFrame = tk.Frame(leftFrame)
-        bottomLeftFrame.pack(fill=BOTH)
-
-        mainFrame = tk.Frame(topLeftFrame)
+        mainFrame = tk.Frame(leftFrame)
         mainFrame.pack(side=LEFT, fill=BOTH)
 
-        validMainFrame = tk.Frame(topLeftFrame, pady=40)
+        validMainFrame = tk.Frame(leftFrame, pady=40)
         validMainFrame.pack(side=LEFT, fill=BOTH, expand=True)
         validMainFrame.pack_forget()
 
-        # Bead Height Checker M/C Value Frame
-        beadFrame1 = LabelFrame(bottomLeftFrame, text="Bead Height Checker M/C Value")
-        beadFrame1.pack(side=BOTTOM, padx=10, pady=10, fill=BOTH)
-
-        beadMainFrame1 = Frame(beadFrame1)
-        beadMainFrame1.pack(side=LEFT, fill=BOTH, expand=True)
-
-        validBeadMainFrame1 = Frame(beadFrame1)
-        validBeadMainFrame1.pack(side=LEFT, fill=BOTH, expand=True)
-        validBeadMainFrame1.pack_forget()
-
         # Top Right Frame
-        rightFrame = tk.Frame(topFrame)
-        rightFrame.pack()
+        rightFrame = LabelFrame(topFrame, text='Reject Code')
+        rightFrame.pack(padx=10, pady=10)
 
-        # last Frame
-        lastFrame = LabelFrame(rightFrame, text="Unknown")
-        lastFrame.pack(padx=10, pady=10, fill=BOTH)
+        rejFrame = Frame(rightFrame)
+        rejFrame.pack(side=LEFT, fill=BOTH, expand=True)
 
-        lastMainFrame = Frame(lastFrame)
-        lastMainFrame.pack(side=LEFT, fill=BOTH, expand=True)
-
-        validLastMainFrame = Frame(lastFrame)
-        validLastMainFrame.pack(side=LEFT, fill=BOTH, expand=True)
-        validLastMainFrame.pack_forget()
+        validRejFrame = Frame(rightFrame)
+        validRejFrame.pack(side=LEFT, fill=BOTH, expand=True)
+        validRejFrame.pack_forget()
 
         # bottom frame
         bottomFrame = tk.Frame(root)
@@ -379,16 +329,11 @@ class TarzanEncap(tk.Frame):
         ents1 = self.makeForm(mainFrame, self.fieldsLeft)
         entries2 = ents1
 
-        ents2 = self.makeForm(beadMainFrame1, self.fieldsRight1)
-        ents3 = self.makeForm(lastMainFrame, self.fieldsRight3)
+        ents2 = self.makeForm(rejFrame, self.fieldsRight)
         ents.update(ents1)
         ents.update(ents2)
-        ents.update(ents3)
-
-        print(ents.keys())
 
         valid = self.makeValidateTxt(validMainFrame, self.fieldsLeft)
-        print(valid.keys())
 
         lblYieldTarget = Label(mainFrame, text="yield")
         lblYieldTarget.pack(padx=5, pady=5)
