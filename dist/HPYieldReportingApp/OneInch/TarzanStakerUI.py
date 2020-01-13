@@ -184,7 +184,6 @@ class TarzanStaker(tk.Frame):
             # row_count = ws1.max_row
             print("row count is: " + str(row_count))
 
-
             # set the minimum and maximum
             minRow = 7
             maxRow = row_count - 1
